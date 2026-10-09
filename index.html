@@ -59,15 +59,12 @@
         const container = document.getElementById('canvas-container');
         const centerTextEl = document.getElementById('center-text');
 
-        // Используем vw/vh для адаптации под любой экран
         const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-        // Центр экрана
         const centerX = vw / 2;
         const centerY = vh / 2;
 
-        // Масштаб сердца — зависит от размера экрана
         const scale = Math.min(vw, vh) / 30;
 
         const points = [];
@@ -80,24 +77,22 @@
             return { x, y };
         }
 
-        // Собираем точки по контуру (плотно, чтобы не было промежутков)
-        const totalPoints = 400; 
+        // ПОРЕЖЕ: уменьшили количество точек с 400 до 200
+        const totalPoints = 200; 
         for (let i = 0; i < totalPoints; i++) {
             let t = (i / totalPoints) * Math.PI * 2;
             let { x, y } = getHeartPoint(t);
             
             let posX = centerX + x * scale;
-            let posY = centerY - y * scale; // Инвертируем Y
+            let posY = centerY - y * scale;
 
             points.push({ x: posX, y: posY, t: t });
         }
 
-        // Сортируем по углу t — чтобы надписи появлялись последовательно по контуру
-        // Начинаем с верхней точки (t = 0 соответствует верхней "впадинке" сердца)
+        // Сортировка: начинаем с верхней точки и идём по контуру
         points.sort((a, b) => a.t - b.t);
 
-        // Создаём надписи с задержкой
-        const totalTime = 15000; // 15 секунд
+        const totalTime = 15000; // 15 секунд на появление всех
         const delayPerPoint = totalTime / points.length;
 
         points.forEach((p, index) => {
@@ -108,7 +103,6 @@
             span.style.left = p.x + 'px';
             span.style.top = p.y + 'px';
 
-            // Задержка появления
             const delay = index * (delayPerPoint / 1000);
             span.style.transitionDelay = delay + 's';
 
@@ -127,10 +121,18 @@
             });
         }, 100);
 
-        // Через 15 секунд — белая надпись
+        // Через 15 секунд — "I love you" белым
         setTimeout(() => {
+            centerTextEl.innerText = "I love you";
             centerTextEl.style.opacity = '1';
         }, 15000);
+
+        // И сразу за ним — "Ильдар" (через 3 секунды после появления "I love you")
+        setTimeout(() => {
+            centerTextEl.innerText = "Ильдар";
+            centerTextEl.style.opacity = '1';
+        }, 18000);
+
     </script>
 </body>
 </html>
